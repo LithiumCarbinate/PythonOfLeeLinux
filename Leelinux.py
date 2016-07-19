@@ -1,30 +1,48 @@
+__author__ = 'LeeLinux'
+# -*- coding:utf-8 -*-
+ 
 import urllib
 import urllib2
 import re
- 
+import math
+import httplib
+# import requests
 
- # 
-class Spider:
+class LeeLinux:
  
     def __init__(self):
-        self.siteURL = 'http://ppmac2.25pp.com/zb_pp_v3/index.html#u_game_0_0_5_1'
- 
-    def getPage(self,pageIndex):
-        url = self.siteURL + "?page=" + str(pageIndex)
-        print url
-        request = urllib2.Request(url)
-        response = urllib2.urlopen(request)
-        return response.read().decode('gbk')
- 
-    def getContents(self,pageIndex):
-        page = self.getPage(pageIndex)
-#<li class=""> <a title="The Economist on iPad " data-pos="2" class="fl app-icon" href="javascript:;" data-action="appdetail" data-appid="444524375" data-uid=""> <img src="http://zbimg.25pp.com/images/artwork/87/444524375_108x108.jpg" alt="The Economist on iPad " height="60" width="60"> <span class="cover cover60-white"></span>  <span class="cover icon-ipad3"></span>  </a> <h3><a title="The Economist on iPad " data-pos="2" href="javascript:;" data-action="appdetail" data-appid="444524375" data-uid="">The Economist on iPad </a></h3> <div class="down-count"><span>2576</span>人安装</div> <div class="btn-box">  <span data-name="setup" title="点击下载" class="fl icon icon-down" data-appid="444524375" data-uid=""></span> <span data-name="cancel" class="fl icon  icon-cancel01" title="点击取消下载" data-appid="444524375" data-uid=""></span>  </div>  <div class="dc-select pa" data-appid="444524375"> <strong>请选择设备</strong>  </div>  </li>
-        pattern = re.compile('<span data-name="setup".*?pic-word.*?<a href="(.*?)".*?<img src="(.*?)".*?<a class="lady-name.*?>(.*?)</a>.*?<strong>(.*?)</strong>.*?<span>(.*?)</span>',re.S)
-        items = re.findall(pattern,page)
-        for item in items:
-            print item[0],item[1],item[2],item[3],item[4]
- 
-spider = Spider()
-spider.getContents(1)
 
-# <span data-name="setup" title="点击下载" class="fl icon icon-down" data-appid="1111479468" data-uid=""></span>
+        self.siteURL = 'http://jsondata.25pp.com/index.html'
+ 
+    def getJson(self,pageIndex):
+
+        url = self.siteURL
+
+        headers = {
+         'Host':'jsondata.25pp.com',
+         'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0',
+         'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+         'Accept-Language':'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+         'Accept-Encoding':'gzip, deflate',
+         'Tunnel-Command':'4261433392',
+         'Content-Type':'application/json',
+         'Referer':'http://ppmac2.25pp.com/zb_pp_v3/index.html',
+         'Content-Length':'87',
+         'Origin:http':'//ppmac2.25pp.com',
+         'Connection':'keep-alive'}
+
+        data = {"dcType":0, "resType":1, "listType":5, "catId":0, "clFlag":1, "perCount":32, "page":pageIndex}
+
+        req = urllib2.Request(url, data, headers)
+
+        response = urllib2.urlopen(req)
+
+        compressedData = response.read()
+        
+        return compressedData
+ 
+leeLinux = LeeLinux()
+
+for x in xrange(0,2):
+    Json=leeLinux.getJson(x)
+    print Json
